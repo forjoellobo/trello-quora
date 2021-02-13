@@ -1,22 +1,22 @@
 package com.upgrad.quora.service.dao;
 
-import com.upgrad.quora.service.entity.QuestionEntity;
+import com.upgrad.quora.service.entity.UserAuthEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
-//Dao class for performing CRUD operations on question table in the database.
 @Repository
-public class QuestionDao {
+public class UserAuthDao {
     //@PersistenceContext annotation is used to inject an EntityManager
     @PersistenceContext
     EntityManager entityManager;
-    // Method to get question from database by uuid
-    public QuestionEntity getQuestionByUuid(final String questionUuid) {
+    // Method to get UserAuthEntity by accessToken from database
+    public UserAuthEntity getUserAuthByToken(final String accessToken) {
         try {
-            return entityManager.createNamedQuery("getQuestionByUuid",QuestionEntity.class).setParameter("uuid",questionUuid).getSingleResult();
+            return entityManager.createNamedQuery("userAuthByAccessToken", UserAuthEntity.class).
+                    setParameter("accessToken", accessToken).getSingleResult();
         } catch (NoResultException nre) {
             return null;
         }

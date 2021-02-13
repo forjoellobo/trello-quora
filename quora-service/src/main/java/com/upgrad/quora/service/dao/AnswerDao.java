@@ -9,7 +9,7 @@ import javax.persistence.PersistenceContext;
 @Repository
 public class AnswerDao {
 
-    ////@PersistenceContext annotation is used to inject an EntityManager
+    //@PersistenceContext annotation is used to inject an EntityManager
     @PersistenceContext
     private EntityManager entityManager;
 
