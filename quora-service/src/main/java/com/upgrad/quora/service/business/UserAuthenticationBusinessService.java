@@ -30,15 +30,11 @@ public class UserAuthenticationBusinessService {
     @Transactional(propagation = Propagation.REQUIRED)
     public UserAuthTokenEntity authenticate(final String userName, final String password) throws AuthenticationFailedException {
         UserEntity userEntity = userDao.getUserByUserName((userName));
-        //checks if the username exists in the database, if it is not found it will throw an AuthenticationFailedException
-        //with the message as stated below
+
         if (userEntity == null) {
             throw new AuthenticationFailedException("ATH-001", "This username does not exist");
         }
-        //Here the  encrypt method will encrypt the password with the appropriate salt and
-        // compares the encrypted password against the encrypted password stored in the database.
-        //If both the encrypted password matches and the username is found in the database then it generates the access-token
-        // and returns an object of UserAuthTokenEntity else throws an AuthenticationFailedException
+
         final String encryptedPassword = cryptographyProvider.encrypt(password, userEntity.getSalt());
         if (encryptedPassword.equals(userEntity.getPassword())) {
             JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(encryptedPassword);
@@ -46,7 +42,6 @@ public class UserAuthenticationBusinessService {
             userAuthToken.setUser(userEntity);
 
             final ZonedDateTime now = ZonedDateTime.now();
-            //The expiry time limit for an accesstoken is 8 hours from the time of user login
             final ZonedDateTime expiresAt = now.plusHours(8);
             String uuid = userEntity.getUuid();
 
@@ -70,8 +65,6 @@ public class UserAuthenticationBusinessService {
     @Transactional(propagation = Propagation.REQUIRED)
     public UserAuthTokenEntity signOut(final String bearerAcccessToken) throws SignOutRestrictedException, NullPointerException {
         UserAuthTokenEntity userAuthToken = userDao.getUserAuthToken(bearerAcccessToken);
-        //if the access token doesnt exist in the database it will throw an error with below message
-        //else if the access token exists in the database the logout time will be updated and persisted in the database
         if (userAuthToken == null) {
             throw new SignOutRestrictedException("SGR-001", "User is not Signed in");
         } else {
