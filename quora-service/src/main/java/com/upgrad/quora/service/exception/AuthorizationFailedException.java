@@ -1,18 +1,20 @@
 package com.upgrad.quora.service.exception;
 
+
+//AuthorizationFailedException is thrown when user is not authorized
+// to access that endpoint.
+
+
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
-/**
- * AuthorizationFailedException is thrown when user is not authorized to access that endpoint.
- */
-public class AuthorizationFailedException extends Exception {
+public class AuthorizationFailedException extends Exception{
     private final String code;
     private final String errorMessage;
 
     public AuthorizationFailedException(final String code, final String errorMessage) {
-        this.code = code;
-        this.errorMessage = errorMessage;
+        this.code=code;
+        this.errorMessage=errorMessage;
     }
 
     @Override
@@ -37,6 +39,4 @@ public class AuthorizationFailedException extends Exception {
     public String getErrorMessage() {
         return errorMessage;
     }
-
 }
-
