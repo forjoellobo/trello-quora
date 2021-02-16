@@ -18,6 +18,12 @@ import java.time.ZonedDateTime;
 @Entity
 // @Table annotation specifies that the entity is mapped to the specified(name = "user_auth") table in the database
 @Table(name = "answer")
+//@NamedQueries JPA annotation Specifies a static, named query
+@NamedQueries({
+        @NamedQuery(
+                name = "getAnswerByUuid",
+                query = "select a from AnswerEntity a where a.uuid=:uuid")
+})
 public class AnswerEntity implements Serializable {
     //@Id annotation is used to specify the identifier property of the entity
     @Id
