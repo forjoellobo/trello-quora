@@ -18,7 +18,6 @@ import com.upgrad.quora.api.model.AnswerEditRequest;
 @RestController
 //Default mapping of the answer controller
 @RequestMapping("/")
-// This is a endpoint or controller method for creating an answer for a given question
 public class AnswerController {
 
     @Autowired
