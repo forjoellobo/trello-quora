@@ -1,6 +1,7 @@
 package com.upgrad.quora.api.exception;
 
 import com.upgrad.quora.api.model.ErrorResponse;
+import com.upgrad.quora.service.exception.AnswerNotFoundException;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,13 @@ public class RestExceptionHandler {
     @ExceptionHandler(InvalidQuestionException.class)
     public ResponseEntity<ErrorResponse> invalidQuestionResponse(
             InvalidQuestionException exception, WebRequest request) {
+        return new ResponseEntity<ErrorResponse>(
+                new ErrorResponse().code(exception.getCode()).message(exception.getErrorMessage()),
+                HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(AnswerNotFoundException.class)
+    public ResponseEntity<ErrorResponse> answerNotFoundResponse(
+            AnswerNotFoundException exception, WebRequest request) {
         return new ResponseEntity<ErrorResponse>(
                 new ErrorResponse().code(exception.getCode()).message(exception.getErrorMessage()),
                 HttpStatus.NOT_FOUND);
