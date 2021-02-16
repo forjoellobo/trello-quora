@@ -27,4 +27,8 @@ public class AnswerDao {
             return null;
         }
     }
+    //it will update the answer
+    public void updateAnswer(AnswerEntity answerEntity) {
+        entityManager.merge(answerEntity);
+    }
 }
