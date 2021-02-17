@@ -58,9 +58,26 @@ public class UserController {
 
     }
 
+    /* userSignIn */
+    @RequestMapping(method = RequestMethod.POST, path = "/user/signin", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<SigninResponse> userSignin(@RequestHeader("authorization") final String authorization) throws AuthenticationFailedException {
 
 
-    //userSignout
+        byte[] decode = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
+        String decodedText = new String(decode);
+        String[] decodedArray = decodedText.split(":");
+
+        UserAuthTokenEntity userAuthToken = userAuthenticationBusinessService.authenticate(decodedArray[0], decodedArray[1]);
+        UserEntity user = userAuthToken.getUser();
+
+        SigninResponse authenticatedSigninResponse = new SigninResponse().id(user.getUuid()).message("SIGNED IN SUCCESSFULLY");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("access-token", userAuthToken.getAccessToken());
+        // The Http Status code 200 , the response code HttpStatus.OK and the status message SIGNED IN SUCCESSFULLY
+
+        return new ResponseEntity<SigninResponse>(authenticatedSigninResponse, headers, HttpStatus.OK);
+    }
 
 
 
