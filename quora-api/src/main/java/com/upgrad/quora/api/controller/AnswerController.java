@@ -14,6 +14,7 @@ import com.upgrad.quora.api.model.AnswerResponse;
 import com.upgrad.quora.api.model.AnswerRequest;
 import com.upgrad.quora.api.model.AnswerEditResponse;
 import com.upgrad.quora.api.model.AnswerEditRequest;
+import com.upgrad.quora.api.model.AnswerDeleteResponse;
 // @RestController annotation combines @Controller and @ResponseBody – which eliminates the need to annotate every request handling method of the controller class with the @ResponseBody annotation.
 @RestController
 //Default mapping of the answer controller
@@ -39,7 +40,7 @@ public class AnswerController {
     }
     //endpoint or controller method for editing an answer for a question
     // It takes authorization or access token from RequestHeader, answerId from PathVariable and an answerEditRequest as a parameter and throws AuthorizationFailed and AnswerNotFound exception and returns a ResponseEntity.
-    // Method is mapped to URL type "/answer/edit/{answerId}", and RequestMrthod is of type put, produces Json content
+    // Method is mapped to URL type "/answer/edit/{answerId}", and RequestMethod is of type put, produces Json content
     @RequestMapping(method = RequestMethod.PUT, path = "/answer/edit/{answerId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<AnswerEditResponse> editAnswerContent(@RequestHeader("authorization") final String accessToken, @PathVariable("answerId") final String answerId, AnswerEditRequest answerEditRequest)throws AuthorizationFailedException, AnswerNotFoundException {
         AnswerEditResponse answerEditResponse = new AnswerEditResponse();
@@ -47,5 +48,14 @@ public class AnswerController {
         answerEditResponse.setId(answerEntity.getUuid());
         answerEditResponse.setStatus("ANSWER EDITED");
         return new ResponseEntity<AnswerEditResponse>(answerEditResponse, HttpStatus.OK);
+    }
+    //endpoint or controller method for deleting an answer
+    // It takes authorization or access token from RequestHeader, answerId from PathVariable as a parameter and throws AuthorizationFailed and AnswerNotFound exception and returns a ResponseEntity.
+    // Method is mapped to URL type "/answer/delete/{answerId}", and RequestMethod is of type DELETE, produces Json content
+    @RequestMapping(method = RequestMethod.DELETE, path = "/answer/delete/{answerId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<AnswerDeleteResponse> deleteAnswer(@RequestHeader("authorization") final String accessToken, @PathVariable("answerId") String answerId)throws AuthorizationFailedException, AnswerNotFoundException {
+        AnswerEntity answerEntity = answerService.deleteAnswer(answerId, accessToken);
+        AnswerDeleteResponse answerDeleteResponse = new AnswerDeleteResponse().id(answerEntity.getUuid()).status("ANSWER DELETED");
+        return new ResponseEntity<AnswerDeleteResponse>(answerDeleteResponse, HttpStatus.OK);
     }
 }
