@@ -23,6 +23,8 @@ public class AnswerController {
     @Autowired
     AnswerService answerService;
     // This is a endpoint or controller method for creating an answer for a given question
+     // It takes authorization or access token from RequestHeader, QuestionId from PathVariable and an AnswerRequest as a parameter and throws AuthorizationFailed and InvalidQuestion exception and returns a ResponseEntity.
+    // Method is mapped to URL type "/question/{questionId}/answer/create", and RequestMethod is of type post, produces Json content
     @RequestMapping(method = RequestMethod.POST, path = "/question/{questionId}/answer/create", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<AnswerResponse> createAnswer(@RequestHeader("authorization") final String accessToken,
                                                        @PathVariable("questionId") final String questionId,
@@ -36,6 +38,8 @@ public class AnswerController {
         return new ResponseEntity<AnswerResponse>(answerResponse, HttpStatus.CREATED);
     }
     //endpoint or controller method for editing an answer for a question
+    // It takes authorization or access token from RequestHeader, answerId from PathVariable and an answerEditRequest as a parameter and throws AuthorizationFailed and AnswerNotFound exception and returns a ResponseEntity.
+    // Method is mapped to URL type "/answer/edit/{answerId}", and RequestMrthod is of type put, produces Json content
     @RequestMapping(method = RequestMethod.PUT, path = "/answer/edit/{answerId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<AnswerEditResponse> editAnswerContent(@RequestHeader("authorization") final String accessToken, @PathVariable("answerId") final String answerId, AnswerEditRequest answerEditRequest)throws AuthorizationFailedException, AnswerNotFoundException {
         AnswerEditResponse answerEditResponse = new AnswerEditResponse();
