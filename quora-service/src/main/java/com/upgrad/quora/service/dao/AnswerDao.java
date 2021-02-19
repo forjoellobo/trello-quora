@@ -31,4 +31,15 @@ public class AnswerDao {
     public void updateAnswer(AnswerEntity answerEntity) {
         entityManager.merge(answerEntity);
     }
+
+    //This method deletes answers from database and accepts AnswerId as a parameter in String format
+    public AnswerEntity deleteAnswer(final String answerId) {
+        // fetch the answer to be deleted
+        AnswerEntity deleteAnswer = getAnswerById(answerId);
+        // Check if deleteAnswer is null or not
+        if (deleteAnswer != null) {
+            entityManager.remove(deleteAnswer);
+        }
+        return deleteAnswer;
+    }
 }
