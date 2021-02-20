@@ -119,7 +119,7 @@ public class QuestionService implements EndPointIdentifier {
     }
 
     QuestionEntity checkQuestionIsValid(String uuid) throws InvalidQuestionException {
-        QuestionEntity existingQuestionEntity = questionDao.getQuestionById(uuid);
+        QuestionEntity existingQuestionEntity = questionDao.getQuestionByUuid(uuid);
 
         if (existingQuestionEntity == null) {
             throw new InvalidQuestionException("QUES-001", "Entered question uuid does not exist");

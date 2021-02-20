@@ -89,11 +89,11 @@ public class QuestionEntity implements Serializable {
         this.date = date;
     }
 
-    public UserEntity getUserEntity() {
+    public UserEntity getUser() {
         return userEntity;
     }
 
-    public void setUserEntity(UserEntity userEntity) {
+    public void setUser(UserEntity userEntity) {
         this.userEntity = userEntity;
     }
 

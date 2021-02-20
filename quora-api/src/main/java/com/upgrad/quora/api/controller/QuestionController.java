@@ -58,7 +58,7 @@ public class QuestionController implements EndPointIdentifier {
 
         final QuestionEntity questionEntity = new QuestionEntity();
         questionEntity.setUuid(UUID.randomUUID().toString());
-        questionEntity.setUserId(userAuthTokenEntity.getUser());
+        questionEntity.setUser(userAuthTokenEntity.getUser());
         questionEntity.setContent(questionRequest.getContent());
         questionEntity.setDate(ZonedDateTime.now());
 
