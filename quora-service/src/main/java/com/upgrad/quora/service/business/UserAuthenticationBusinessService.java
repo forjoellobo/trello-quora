@@ -64,7 +64,7 @@ public class UserAuthenticationBusinessService {
      */
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public UserAuthTokenEntity authenticate(final String username, final String password) throws AuthenticationFailedException {
+    public UserAuthTokenEntity signin(final String username, final String password) throws AuthenticationFailedException {
         UserEntity userEntity = userDao.getUserByUserName((username));
 
         if (userEntity == null) {
