@@ -18,9 +18,6 @@ public class QuestionService implements EndPointIdentifier {
     @Autowired
     QuestionDao questionDao;
 
-    @Autowired
-    AuthorizationService authorizationService;
-
 
 
     @Transactional(propagation = Propagation.REQUIRED)
