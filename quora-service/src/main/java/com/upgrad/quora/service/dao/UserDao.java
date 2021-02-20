@@ -13,6 +13,23 @@ public class UserDao {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    //This method retrieves the user based on user uuid, if found returns user else null
+
+    public UserEntity getUserByUuid(final String uuid) {
+        try {
+            return entityManager.createNamedQuery("userByUuid", UserEntity.class).setParameter("uuid", uuid).getSingleResult();
+        } catch (NoResultException nre) {
+            return null;
+        }
+    }
+
+    /**
+     * create user in database.
+     *
+     * @param userEntity : the userEntity body
+     * @return User details
+     */
     public UserEntity createUser(UserEntity userEntity) {
         entityManager.persist(userEntity);
         return userEntity;
@@ -40,48 +57,46 @@ public class UserDao {
         }
     }
 
-
-    //This method persists an object of UserAuthTokenEntity to the database
-
-    public UserAuthTokenEntity createAuthToken(final UserAuthTokenEntity userAuthTokenEntity) {
-        entityManager.persist(userAuthTokenEntity);
-        return userAuthTokenEntity;
+    /**
+     * Method to update user in db
+     *
+     * @param updatedUserEntity : UserEntity body
+     * @return updated response
+     */
+    public void updateUserEntity(final UserEntity updatedUserEntity) {
+        entityManager.merge(updatedUserEntity);
     }
 
-    // This method retrieves the accesstoken from the database if it exists otherwise returns null
-
-    public UserAuthTokenEntity getUserAuthToken(final String accessToken) {
-        try {
-            return entityManager.createNamedQuery("userAuthTokenByAccessToken", UserAuthTokenEntity.class).setParameter("accessToken", accessToken).getSingleResult();
-        } catch (NoResultException nre) {
-            return null;
+    /**
+     * Method to delete user by id
+     *
+     * @param userId : username which you want to delete
+     * @return deleted response
+     */
+    public UserEntity deleteUser(final String userId) {
+        UserEntity deleteUser = getUserByUuid(userId);
+        if (deleteUser != null) {
+            this.entityManager.remove(deleteUser);
         }
+        return deleteUser;
     }
 
 
-    //Now the logoutAt attribute is updated  and the UserAuthTokenEntity object is in detached state
+//    public UserAuthTokenEntity getUserAuthToken(final String accessToken) {
+//        try {
+//            return entityManager.createNamedQuery("userAuthTokenByAccessToken", UserAuthTokenEntity.class).setParameter("accessToken", accessToken).getSingleResult();
+//        } catch (NoResultException nre) {
+//            return null;
+//        }
+//    }
+//
+//
+//    //Now the logoutAt attribute is updated  and the UserAuthTokenEntity object is in detached state
+//
+//    public void updateUserLogoutAt(final UserAuthTokenEntity updateUserLogoutAt) {
+//
+//        entityManager.merge(updateUserLogoutAt);
+//    }
 
-    public void updateUserLogoutAt(final UserAuthTokenEntity updateUserLogoutAt) {
-
-        entityManager.merge(updateUserLogoutAt);
-    }
-
-    //This method retrieves the user based on user uuid, if found returns user else null
-
-    public UserEntity getUserByUuid(final String uuid) {
-        try {
-            return entityManager.createNamedQuery("userByUuid", UserEntity.class).setParameter("uuid", uuid).getSingleResult();
-        } catch (NoResultException nre) {
-            return null;
-        }
-    }
-
-
-    //This method deletes the user record from database
-
-    public UserEntity deleteUser(final UserEntity userEntity) {
-        entityManager.remove(userEntity);
-        return userEntity;
-    }
 
 }
