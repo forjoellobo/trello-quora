@@ -41,6 +41,12 @@
             <version>5.0.8.RELEASE</version>
             <scope>compile</scope>
         </dependency>
+ <!-- Javassist (JAVA programming ASSISTant) makes Java bytecode manipulation simple. It is a class library for editing bytecodes in Java-->
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.25.0-GA</version>
+        </dependency>
     </dependencies>
 
     <parent>

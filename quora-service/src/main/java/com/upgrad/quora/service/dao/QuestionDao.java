@@ -57,7 +57,7 @@ public class QuestionDao {
      * @return QuestionEntity
      */
 
-    public QuestionEntity getQuestionById(String questionId) {
+    public QuestionEntity getQuestionByUuid(String questionId) {
         try {
             String query = "select u from QuestionEntity u where u.uuid = :uuid";
             return entityManager.createQuery(query, QuestionEntity.class)
