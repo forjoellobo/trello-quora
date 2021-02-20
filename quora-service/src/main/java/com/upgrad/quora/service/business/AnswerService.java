@@ -52,7 +52,7 @@ public class AnswerService {
         answerEntity.setUuid(UUID.randomUUID().toString());
         answerEntity.setDate(ZonedDateTime.now());
         answerEntity.setQuestionEntity(questionEntity);
-        answerEntity.setUserEntity(userAuthEntity.getUserEntity());
+        answerEntity.setUserEntity(userAuthEntity.getUser());
         return answerDao.createAnswer(answerEntity);
     }
     @Transactional(propagation = Propagation.REQUIRED)
@@ -75,7 +75,7 @@ public class AnswerService {
             throw new AnswerNotFoundException("ANS-001", "Entered answer uuid does not exist");
         }
         //check editing user is owner of the answer or not
-        if (!answerEntity.getUserEntity().getUuid().equals(userAuthEntity.getUserEntity().getUuid())) {
+        if (!answerEntity.getUserEntity().getUuid().equals(userAuthEntity.getUser().getUuid())) {
             throw new AuthorizationFailedException(
                     "ATHR-003", "Only the answer owner can edit the answer");
         }
@@ -106,7 +106,7 @@ public class AnswerService {
             throw new AnswerNotFoundException("ANS-001", "Entered answer uuid does not exist");
         }
         //it will check deleting user is owner of the answer or admin or not
-        if (userAuthEntity.getUserEntity().getRole().equals("admin") || answerEntity.getUserEntity().getUuid().equals(userAuthEntity.getUserEntity().getUuid())) {
+        if (userAuthEntity.getUser().getRole().equals("admin") || answerEntity.getUserEntity().getUuid().equals(userAuthEntity.getUser().getUuid())) {
             return answerDao.deleteAnswer(answerId);
         } else {
             throw new AuthorizationFailedException(
