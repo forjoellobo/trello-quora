@@ -27,7 +27,11 @@ public class QuestionService implements EndPointIdentifier {
     @Autowired
     AuthorizationService authorizationService;
 
-
+    /**
+     * Method to create a new user.
+     * @param questionEntity the QuestionEntity to be created
+     * @return created UserEntity
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public QuestionEntity createQuestion(final QuestionEntity questionEntity) {
 
@@ -35,7 +39,13 @@ public class QuestionService implements EndPointIdentifier {
 
     }
 
-
+    /**
+     * Method to get all the questions
+     *
+     * @param accessToken accessToken assigned to the user
+     * @return List<QuestionEntity> list of all the questions associated with the user
+     * @throws AuthorizationFailedException
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     public List<QuestionEntity> getAllQuestions() throws AuthorizationFailedException {
 

@@ -24,13 +24,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * @author Joel Lobo (https://github.com/forjoellobo)
+ * Description - Controller class for the Question related methods
+ */
 
 
 @RestController
 @RequestMapping("/")
 public class QuestionController implements EndPointIdentifier {
 
-    // Implemented Endpoint Identifier interface for generic AuthorizationFailedException Handling
+    //Implemented Endpoint Identifier interface for generic AuthorizationFailedException Handling
 
     @Autowired
     QuestionService questionService;
@@ -39,8 +43,14 @@ public class QuestionController implements EndPointIdentifier {
     @Autowired
     AuthorizationService authorizationService;
 
-
-
+    /**
+     * Method implements the question creation endpoint
+     *
+     * @param accessToken     accesstoken assigned to the user upon signin
+     * @param questionRequest has all the details for creating a new question
+     * @return ResponseEntity to indicate the question creation was successful or not and also returns uuid of question created
+     * @throws AuthorizationFailedException
+     */
     @PostMapping(path = "/question/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionResponse> createQuestion(@RequestHeader("authorization") String accessToken,
                                                           final QuestionRequest questionRequest) throws AuthorizationFailedException {
@@ -61,8 +71,13 @@ public class QuestionController implements EndPointIdentifier {
 
 
 
-
-
+    /**
+     * Method implements the get all questions endpoint
+     *
+     * @param accessToken assigned to the user upon signin
+     * @return ResponseEntity to indicate the status of the query as well as the list of questions
+     * @throws AuthorizationFailedException
+     */
     @GetMapping(path = "/question/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestions(@RequestHeader("authorization") String accessToken) throws AuthorizationFailedException {
 

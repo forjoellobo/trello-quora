@@ -11,6 +11,10 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
+/**
+ * @author joel lobo (https://github.com/forjoellobo)
+ * Description - Entity class for the Question table
+ */
 
 @Table(name = "question")
 @Entity
