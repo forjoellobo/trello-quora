@@ -1,9 +1,7 @@
 package com.upgrad.quora.api.controller;
 
 
-import com.upgrad.quora.api.model.QuestionDetailsResponse;
-import com.upgrad.quora.api.model.QuestionRequest;
-import com.upgrad.quora.api.model.QuestionResponse;
+import com.upgrad.quora.api.model.*;
 import com.upgrad.quora.service.business.AuthorizationService;
 import com.upgrad.quora.service.business.QuestionService;
 import com.upgrad.quora.service.business.UserAuthenticationBusinessService;
@@ -13,6 +11,7 @@ import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
+import com.upgrad.quora.service.exception.InvalidQuestionException;
 import com.upgrad.quora.service.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,7 +43,7 @@ public class QuestionController implements EndPointIdentifier {
 
     @PostMapping(path = "/question/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionResponse> createQuestion(@RequestHeader("authorization") String accessToken,
-                                                          @RequestBody final QuestionRequest questionRequest) throws AuthorizationFailedException {
+                                                          final QuestionRequest questionRequest) throws AuthorizationFailedException {
         UserAuthTokenEntity userAuthTokenEntity = authorizationService.getUserAuthTokenEntity(accessToken,QUESTION_ENDPOINT);
 
         final QuestionEntity questionEntity = new QuestionEntity();
@@ -67,7 +66,7 @@ public class QuestionController implements EndPointIdentifier {
     @GetMapping(path = "/question/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestions(@RequestHeader("authorization") String accessToken) throws AuthorizationFailedException {
 
-        authorizationService.getUserAuthTokenEntity(accessToken,QUESTION_ENDPOINT);
+        authorizationService.getUserAuthTokenEntity(accessToken,GET_ALL_QUESTIONS);
 
         List<QuestionEntity> questionEntityList = questionService.getAllQuestions();
 
@@ -89,5 +88,54 @@ public class QuestionController implements EndPointIdentifier {
     }
 
 
+    /**
+     * Method implements the edit question content endoint
+     *
+     * @param accessToken         assigned to the user upon signin
+     * @param questionId          the uuid of the question to be edited
+     * @param questionEditRequest provides the content to edit in the question
+     * @return ResponseEntity  indicating the edit was a success or not along with the updated question uuid
+     * @throws AuthorizationFailedException
+     * @throws InvalidQuestionException
+     */
+    @PutMapping(path = "/question/edit/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<QuestionEditResponse> editQuestionContent(@RequestHeader("authorization") String accessToken, @PathVariable String questionId, QuestionEditRequest questionEditRequest)
+            throws AuthorizationFailedException, InvalidQuestionException {
+
+
+        QuestionEntity questionEntity = questionService.checkQuestion(accessToken, questionId);
+        questionEntity.setContent(questionEditRequest.getContent());
+        QuestionEntity updatedQuestionEntity = questionService.updateQuestion(questionEntity);
+
+        QuestionEditResponse questionEditResponse = new QuestionEditResponse().id(updatedQuestionEntity.getUuid()).status("QUESTION EDITED");
+
+        return new ResponseEntity<>(questionEditResponse, HttpStatus.OK);
+
+
+    }
+
+    /**
+     * Method that implements question deletion endpoint
+     *
+     * @param accessToken accessToken assigned to the user upon signin
+     * @param questionId  the uuid of the question to be deleted
+     * @return ResponseEntity to indicated the deletion was successful or not along with the deleted question id
+     * @throws AuthorizationFailedException
+     * @throws InvalidQuestionException
+     */
+
+    @DeleteMapping(path = "/question/delete/{questionId}")
+    public ResponseEntity<QuestionDeleteResponse> questionDelete(@RequestHeader("authorization") String accessToken,
+                                                                 @PathVariable String questionId) throws
+
+            AuthorizationFailedException, InvalidQuestionException {
+
+        String id = questionService.deleteQuestion(questionId, accessToken);
+
+        QuestionDeleteResponse questionDeleteResponse = new QuestionDeleteResponse().id(id)
+                .status("QUESTION DELETED");
+
+        return new ResponseEntity<>(questionDeleteResponse, HttpStatus.OK);
+    }
 }
 
