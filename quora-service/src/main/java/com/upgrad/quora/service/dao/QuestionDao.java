@@ -4,8 +4,9 @@ import com.upgrad.quora.service.entity.QuestionEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-
+import java.util.List;
 
 
 @Repository
@@ -20,5 +21,23 @@ public class QuestionDao {
         return questionEntity;
     }
 
+    /**
+     * Method to get the List of All the questions
+     *
+     * @return List<QuestionEntity>
+     */
+
+    public List<QuestionEntity> getAllQuestions() {
+
+        try {
+
+            String query = "select q from QuestionEntity q";
+            return entityManager.createQuery(query, QuestionEntity.class)
+                    .getResultList();
+        } catch (NoResultException nre) {
+
+            return null;
+        }
+    }
 
 }

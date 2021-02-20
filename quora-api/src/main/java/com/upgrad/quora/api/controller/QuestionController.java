@@ -1,6 +1,7 @@
 package com.upgrad.quora.api.controller;
 
 
+import com.upgrad.quora.api.model.QuestionDetailsResponse;
 import com.upgrad.quora.api.model.QuestionRequest;
 import com.upgrad.quora.api.model.QuestionResponse;
 import com.upgrad.quora.service.business.AuthorizationService;
@@ -12,6 +13,7 @@ import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
+import com.upgrad.quora.service.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -56,6 +60,33 @@ public class QuestionController implements EndPointIdentifier {
         return new ResponseEntity<>(questionResponse, HttpStatus.OK);
     }
 
+
+
+
+
+    @GetMapping(path = "/question/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestions(@RequestHeader("authorization") String accessToken) throws AuthorizationFailedException {
+
+        authorizationService.getUserAuthTokenEntity(accessToken,QUESTION_ENDPOINT);
+
+        List<QuestionEntity> questionEntityList = questionService.getAllQuestions();
+
+        List<QuestionDetailsResponse> questionDetailsResponseList = new ArrayList<QuestionDetailsResponse>();
+        if (!questionEntityList.isEmpty()) {
+
+            for (QuestionEntity n : questionEntityList) {
+                QuestionDetailsResponse questionDetailsResponse = new QuestionDetailsResponse();
+                questionDetailsResponse.setId(n.getUuid());
+                questionDetailsResponse.setContent(n.getContent());
+
+                questionDetailsResponseList.add(questionDetailsResponse);
+            }
+
+        }
+
+        return new ResponseEntity<>(questionDetailsResponseList, HttpStatus.OK);
+
+    }
 
 
 }
