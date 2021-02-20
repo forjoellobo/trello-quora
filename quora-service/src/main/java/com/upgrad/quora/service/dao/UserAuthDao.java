@@ -13,17 +13,45 @@ public class UserAuthDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public UserAuthTokenEntity getUserAuthToken(String jwtToken) {
+    /**
+     * get User auth by token
+     *
+     * @param accessToken : access token to authenticate
+     * @return single user auth details
+     */
+    public UserAuthTokenEntity getUserAuthByToken(final String accessToken) {
         try {
-            return entityManager.createNamedQuery("userAuthTokenByAccessToken", UserAuthTokenEntity.class)
-                    .setParameter("accessToken",jwtToken).getSingleResult();
-        }catch (NoResultException nre) {
+            return entityManager
+                    .createNamedQuery("userAuthTokenByAcessTokan", UserAuthTokenEntity.class)
+                    .setParameter("accessToken", accessToken)
+                    .getSingleResult();
+        } catch (NoResultException nre) {
             return null;
         }
     }
 
-    public UserAuthTokenEntity update(UserAuthTokenEntity userAuthTokenEntity) {
-        entityManager.merge(userAuthTokenEntity);
+    /**
+     * Persists user authen entity in database.
+     *
+     * @param userAuthTokenEntity to be persisted in the DB.
+     * @return UserAuthTokenEntity
+     */
+
+    public UserAuthTokenEntity createAuthToken(final UserAuthTokenEntity userAuthTokenEntity) {
+        entityManager.persist(userAuthTokenEntity);
         return userAuthTokenEntity;
     }
+
+    /**
+     * Update UserAuthEntity in Database
+     *
+     * @param updatedUserAuthEntity: UserAuthEntity object
+     */
+
+    public void  updateUserAuth(UserAuthTokenEntity updatedUserAuthEntity) {
+        entityManager.merge(updatedUserAuthEntity);
+    }
+
+
+
 }
