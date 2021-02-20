@@ -6,7 +6,6 @@ import com.upgrad.quora.api.model.SignoutResponse;
 import com.upgrad.quora.api.model.SignupUserRequest;
 import com.upgrad.quora.api.model.SignupUserResponse;
 import com.upgrad.quora.service.business.UserAuthenticationBusinessService;
-import com.upgrad.quora.service.business.UserBusinessService;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
