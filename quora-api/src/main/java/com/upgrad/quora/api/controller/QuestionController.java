@@ -31,7 +31,7 @@ import java.util.UUID;
 
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/question")
 public class QuestionController implements EndPointIdentifier {
 
     //Implemented Endpoint Identifier interface for generic AuthorizationFailedException Handling
@@ -51,18 +51,12 @@ public class QuestionController implements EndPointIdentifier {
      * @return ResponseEntity to indicate the question creation was successful or not and also returns uuid of question created
      * @throws AuthorizationFailedException
      */
-    @PostMapping(path = "/question/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = "/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionResponse> createQuestion(@RequestHeader("authorization") String accessToken,
                                                           final QuestionRequest questionRequest) throws AuthorizationFailedException {
-        UserAuthTokenEntity userAuthTokenEntity = authorizationService.getUserAuthTokenEntity(accessToken,QUESTION_ENDPOINT);
 
-        final QuestionEntity questionEntity = new QuestionEntity();
-        questionEntity.setUuid(UUID.randomUUID().toString());
-        questionEntity.setUser(userAuthTokenEntity.getUser());
-        questionEntity.setContent(questionRequest.getContent());
-        questionEntity.setDate(ZonedDateTime.now());
 
-        final QuestionEntity createdQuestionEntity = questionService.createQuestion(questionEntity);
+        final QuestionEntity createdQuestionEntity = questionService.createQuestion(questionRequest,accessToken);
         QuestionResponse questionResponse = new QuestionResponse().id(createdQuestionEntity.getUuid())
                 .status("QUESTION CREATED");
 
@@ -78,12 +72,11 @@ public class QuestionController implements EndPointIdentifier {
      * @return ResponseEntity to indicate the status of the query as well as the list of questions
      * @throws AuthorizationFailedException
      */
-    @GetMapping(path = "/question/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestions(@RequestHeader("authorization") String accessToken) throws AuthorizationFailedException {
 
-        authorizationService.getUserAuthTokenEntity(accessToken,GET_ALL_QUESTIONS);
 
-        List<QuestionEntity> questionEntityList = questionService.getAllQuestions();
+        List<QuestionEntity> questionEntityList = questionService.getAllQuestions(accessToken);
 
         List<QuestionDetailsResponse> questionDetailsResponseList = new ArrayList<QuestionDetailsResponse>();
         if (!questionEntityList.isEmpty()) {
@@ -113,7 +106,7 @@ public class QuestionController implements EndPointIdentifier {
      * @throws AuthorizationFailedException
      * @throws InvalidQuestionException
      */
-    @PutMapping(path = "/question/edit/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PutMapping(path = "/edit/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionEditResponse> editQuestionContent(@RequestHeader("authorization") String accessToken, @PathVariable String questionId, QuestionEditRequest questionEditRequest)
             throws AuthorizationFailedException, InvalidQuestionException {
 
@@ -139,7 +132,7 @@ public class QuestionController implements EndPointIdentifier {
      * @throws InvalidQuestionException
      */
 
-    @DeleteMapping(path = "/question/delete/{questionId}")
+    @DeleteMapping(path = "/delete/{questionId}")
     public ResponseEntity<QuestionDeleteResponse> questionDelete(@RequestHeader("authorization") String accessToken,
                                                                  @PathVariable String questionId) throws
 

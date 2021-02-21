@@ -1,6 +1,7 @@
 package com.upgrad.quora.service.dao;
 
 import com.upgrad.quora.service.entity.QuestionEntity;
+import com.upgrad.quora.service.entity.UserEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -39,9 +40,7 @@ public class QuestionDao {
     public List<QuestionEntity> getAllQuestions() {
 
         try {
-
-            String query = "select q from QuestionEntity q";
-            return entityManager.createQuery(query, QuestionEntity.class)
+            return entityManager.createNamedQuery("selectAll", QuestionEntity.class)
                     .getResultList();
         } catch (NoResultException nre) {
 
@@ -59,8 +58,7 @@ public class QuestionDao {
 
     public QuestionEntity getQuestionByUuid(String questionId) {
         try {
-            String query = "select u from QuestionEntity u where u.uuid = :uuid";
-            return entityManager.createQuery(query, QuestionEntity.class)
+            return entityManager.createNamedQuery("getQuestionByUuid", QuestionEntity.class)
                     .setParameter("uuid", questionId).getSingleResult();
 
         } catch (NoResultException nre) {
@@ -90,10 +88,7 @@ public class QuestionDao {
      */
 
     public void deleteQuestionByUUID(String uuid) {
-
-        String query = "delete from QuestionEntity u where u.uuid = :uuid";
-        //dont mention the entity classname in createQuery() for deletion as it doesnt return data just the rows affected
-        Query finalQuery = entityManager.createQuery(query)
+        Query finalQuery = entityManager.createNamedQuery("deleteByUuid")
                 .setParameter("uuid", uuid);
         int rowsAffected = finalQuery.executeUpdate();
     }

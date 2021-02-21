@@ -1,5 +1,6 @@
 package com.upgrad.quora.service.business;
 
+import com.upgrad.quora.api.model.*;
 import com.upgrad.quora.service.common.EndPointIdentifier;
 import com.upgrad.quora.service.dao.QuestionDao;
 import com.upgrad.quora.service.dao.UserDao;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class QuestionService implements EndPointIdentifier {
@@ -29,12 +32,18 @@ public class QuestionService implements EndPointIdentifier {
 
     /**
      * Method to create a new user.
-     * @param questionEntity the QuestionEntity to be created
+     * @param questionRequest the QuestionEntity to be created
      * @return created UserEntity
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public QuestionEntity createQuestion(final QuestionEntity questionEntity) {
+    public QuestionEntity createQuestion(final QuestionRequest questionRequest, String accessToken) throws AuthorizationFailedException {
+        UserAuthTokenEntity userAuthTokenEntity = authorizationService.getUserAuthTokenEntity(accessToken,QUESTION_ENDPOINT);
 
+        final QuestionEntity questionEntity = new QuestionEntity();
+        questionEntity.setUuid(UUID.randomUUID().toString());
+        questionEntity.setUser(userAuthTokenEntity.getUser());
+        questionEntity.setContent(questionRequest.getContent());
+        questionEntity.setDate(ZonedDateTime.now());
         return questionDao.createQuestion(questionEntity);
 
     }
@@ -47,11 +56,10 @@ public class QuestionService implements EndPointIdentifier {
      * @throws AuthorizationFailedException
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public List<QuestionEntity> getAllQuestions() throws AuthorizationFailedException {
+    public List<QuestionEntity> getAllQuestions(String accessToken) throws AuthorizationFailedException {
+        authorizationService.getUserAuthTokenEntity(accessToken,GET_ALL_QUESTIONS);
 
         return questionDao.getAllQuestions();
-
-
     }
 
     /**
