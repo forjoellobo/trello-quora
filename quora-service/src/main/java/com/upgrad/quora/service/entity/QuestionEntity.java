@@ -22,7 +22,9 @@ import java.time.ZonedDateTime;
 @NamedQueries({
         @NamedQuery(
                 name = "getQuestionByUuid",
-                query = "select q from QuestionEntity q where q.uuid=:uuid")
+                query = "select q from QuestionEntity q where q.uuid=:uuid"),
+        @NamedQuery(name="deleteByUuid", query = "delete from QuestionEntity u where u.uuid = :uuid"),
+        @NamedQuery(name="selectAll", query="select q from QuestionEntity q")
 })
 public class QuestionEntity implements Serializable {
     //@Id annotation is used to specify the identifier property of the entity
@@ -89,11 +91,11 @@ public class QuestionEntity implements Serializable {
         this.date = date;
     }
 
-    public UserEntity getUserEntity() {
+    public UserEntity getUser() {
         return userEntity;
     }
 
-    public void setUserEntity(UserEntity userEntity) {
+    public void setUser(UserEntity userEntity) {
         this.userEntity = userEntity;
     }
 
