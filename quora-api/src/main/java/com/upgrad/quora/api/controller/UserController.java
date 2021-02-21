@@ -49,7 +49,7 @@ public class UserController {
 
     // userSignup
     @RequestMapping(method = RequestMethod.POST, path = "/user/signup", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<SignupUserResponse> userSignup(@RequestBody  SignupUserRequest signupUserRequest ) throws SignUpRestrictedException {
+    public ResponseEntity<SignupUserResponse> userSignup(SignupUserRequest signupUserRequest ) throws SignUpRestrictedException {
         UserEntity userEntity = new UserEntity();
         userEntity.setFirstName(signupUserRequest.getFirstName());
         userEntity.setLastName(signupUserRequest.getLastName());
