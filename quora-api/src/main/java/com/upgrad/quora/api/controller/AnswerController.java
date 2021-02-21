@@ -15,6 +15,11 @@ import com.upgrad.quora.api.model.AnswerRequest;
 import com.upgrad.quora.api.model.AnswerEditResponse;
 import com.upgrad.quora.api.model.AnswerEditRequest;
 import com.upgrad.quora.api.model.AnswerDeleteResponse;
+import com.upgrad.quora.api.model.AnswerDetailsResponse;
+
+import java.util.ArrayList;
+import java.util.List;
+
 // @RestController annotation combines @Controller and @ResponseBody – which eliminates the need to annotate every request handling method of the controller class with the @ResponseBody annotation.
 @RestController
 //Default mapping of the answer controller
@@ -57,5 +62,21 @@ public class AnswerController {
         AnswerEntity answerEntity = answerService.deleteAnswer(answerId, accessToken);
         AnswerDeleteResponse answerDeleteResponse = new AnswerDeleteResponse().id(answerEntity.getUuid()).status("ANSWER DELETED");
         return new ResponseEntity<AnswerDeleteResponse>(answerDeleteResponse, HttpStatus.OK);
+    }
+    //endpoint method for get all answer for a question
+    // It takes authorization or access token from RequestHeader, questionId from PathVariable as a parameter and throws AuthorizationFailed and InvalidQuestion exception and returns a ResponseEntity.
+    // Method is mapped to URL type "/answer/all/{questionId}", and RequestMethod is of type GET, produces Json content
+    @RequestMapping(method = RequestMethod.GET, path = "/answer/all/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<List<AnswerDetailsResponse>> getAllAnswersToQuestion(@RequestHeader("authorization") final String accessToken, @PathVariable("questionId") String questionId) throws AuthorizationFailedException, InvalidQuestionException {
+        List<AnswerEntity> answers = answerService.getAllAnswersToQuestion(questionId, accessToken);
+        List<AnswerDetailsResponse> answerDetailsResponses = new ArrayList<>();
+        for (AnswerEntity answerEntity : answers) {
+            AnswerDetailsResponse answerDetailsResponse = new AnswerDetailsResponse();
+            answerDetailsResponse.setId(answerEntity.getUuid());
+            answerDetailsResponse.setQuestionContent(answerEntity.getQuestionEntity().getContent());
+            answerDetailsResponse.setAnswerContent(answerEntity.getAnswer());
+            answerDetailsResponses.add(answerDetailsResponse);
+        }
+        return new ResponseEntity<List<AnswerDetailsResponse>>(answerDetailsResponses, HttpStatus.OK);
     }
 }
