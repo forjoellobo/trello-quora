@@ -25,6 +25,7 @@ public class AuthorizationService implements EndPointIdentifier {
      */
     public UserAuthTokenEntity getUserAuthTokenEntity(String accessToken, String endpointIdentifier) throws AuthorizationFailedException {
 
+        // check if valid auth token
         if (userDao.getUserAuthByToken(accessToken) == null) {
 
             throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
@@ -33,6 +34,7 @@ public class AuthorizationService implements EndPointIdentifier {
             String logoutAt = String.valueOf(userDao.getUserAuthByToken(accessToken)
                     .getLogoutAt());
 
+            // check if user has signed out
             if (!logoutAt.equals("null")) {
                 String error = null;
 
@@ -42,6 +44,8 @@ public class AuthorizationService implements EndPointIdentifier {
                     error = ANSWER_ENDPOINT;
                 } else if (endpointIdentifier.equals(USER_ENDPOINT)) {
                     error = USER_ENDPOINT;
+                } else if (endpointIdentifier.equals(GET_ALL_QUESTIONS_USER)) {
+                    error = GET_ALL_QUESTIONS_USER;
                 }
                 throw new AuthorizationFailedException("ATHR-002", error);
             } else {

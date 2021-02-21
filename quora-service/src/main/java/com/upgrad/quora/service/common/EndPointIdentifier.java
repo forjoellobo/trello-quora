@@ -8,5 +8,6 @@ public interface EndPointIdentifier {
     String GET_ALL_QUESTIONS="User is signed out.Sign in first to get all questions";
     String CHECK_QUESTION="User is signed out.Sign in first to edit the question";
     String DELETE_QUESTION="User is signed out.Sign in first to delete the question";
+    String GET_ALL_QUESTIONS_USER="User is signed out.Sign in first to get all questions posted by a specific user";
 
 }
