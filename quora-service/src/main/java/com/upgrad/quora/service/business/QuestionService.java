@@ -55,7 +55,6 @@ public class QuestionService implements EndPointIdentifier {
      * @return List<QuestionEntity> list of all the questions associated with the user
      * @throws AuthorizationFailedException
      */
-    @Transactional(propagation = Propagation.REQUIRED)
     public List<QuestionEntity> getAllQuestions(final String accessToken) throws AuthorizationFailedException {
         authorizationService.getUserAuthTokenEntity(accessToken,GET_ALL_QUESTIONS);
 

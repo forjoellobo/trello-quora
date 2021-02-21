@@ -24,7 +24,6 @@ public class CommonService {
     * This method gets the user's entire data from the DB
     * accepts user ID and authorization
     * */
-    @Transactional(propagation =  Propagation.REQUIRED)
     public UserEntity getUserProfile(final String userId, String authorization) throws AuthorizationFailedException, UserNotFoundException {
 
         UserAuthTokenEntity userAuthTokenEntity = userAuthDao.getUserAuthByToken(authorization);
