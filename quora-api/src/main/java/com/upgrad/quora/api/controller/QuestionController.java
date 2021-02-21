@@ -37,11 +37,11 @@ public class QuestionController implements EndPointIdentifier {
     //Implemented Endpoint Identifier interface for generic AuthorizationFailedException Handling
 
     @Autowired
-    QuestionService questionService;
+    private QuestionService questionService;
 
 
     @Autowired
-    AuthorizationService authorizationService;
+    private AuthorizationService authorizationService;
 
     /**
      * Method implements the question creation endpoint
@@ -52,8 +52,8 @@ public class QuestionController implements EndPointIdentifier {
      * @throws AuthorizationFailedException
      */
     @PostMapping(path = "/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<QuestionResponse> createQuestion(@RequestHeader("authorization") String accessToken,
-                                                          final QuestionRequest questionRequest) throws AuthorizationFailedException {
+    public ResponseEntity<QuestionResponse> createQuestion(@RequestHeader("authorization") final String accessToken,
+                                                           final QuestionEntity questionRequest) throws AuthorizationFailedException {
 
 
         final QuestionEntity createdQuestionEntity = questionService.createQuestion(questionRequest,accessToken);
@@ -73,7 +73,7 @@ public class QuestionController implements EndPointIdentifier {
      * @throws AuthorizationFailedException
      */
     @GetMapping(path = "/all", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestions(@RequestHeader("authorization") String accessToken) throws AuthorizationFailedException {
+    public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestions(@RequestHeader("authorization") final String accessToken) throws AuthorizationFailedException {
 
 
         List<QuestionEntity> questionEntityList = questionService.getAllQuestions(accessToken);
@@ -107,7 +107,7 @@ public class QuestionController implements EndPointIdentifier {
      * @throws InvalidQuestionException
      */
     @PutMapping(path = "/edit/{questionId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<QuestionEditResponse> editQuestionContent(@RequestHeader("authorization") String accessToken, @PathVariable String questionId, QuestionEditRequest questionEditRequest)
+    public ResponseEntity<QuestionEditResponse> editQuestionContent(@RequestHeader("authorization") final String accessToken, @PathVariable final String questionId, QuestionEditRequest questionEditRequest)
             throws AuthorizationFailedException, InvalidQuestionException {
 
 
@@ -133,8 +133,8 @@ public class QuestionController implements EndPointIdentifier {
      */
 
     @DeleteMapping(path = "/delete/{questionId}")
-    public ResponseEntity<QuestionDeleteResponse> questionDelete(@RequestHeader("authorization") String accessToken,
-                                                                 @PathVariable String questionId) throws
+    public ResponseEntity<QuestionDeleteResponse> questionDelete(@RequestHeader("authorization") final String accessToken,
+                                                                 @PathVariable final String questionId) throws
 
             AuthorizationFailedException, InvalidQuestionException {
 
@@ -143,7 +143,35 @@ public class QuestionController implements EndPointIdentifier {
         QuestionDeleteResponse questionDeleteResponse = new QuestionDeleteResponse().id(id)
                 .status("QUESTION DELETED");
 
-        return new ResponseEntity<>(questionDeleteResponse, HttpStatus.OK);
+        return new ResponseEntity<QuestionDeleteResponse>(questionDeleteResponse, HttpStatus.OK);
+    }
+
+    /*
+    * This controller fetches all the questions posed by a specific user.
+    * Any user can access this endpoint.
+    * Accepts user ID and authorization header
+    */
+    @GetMapping(path = "/all/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestionsByUser(@PathVariable("userId") final String userId, @RequestHeader("authorization") final String accessToken)
+        throws AuthorizationFailedException, UserNotFoundException {
+
+        List<QuestionEntity> questionEntityList = questionService.getAllQuestionsByUser(userId, accessToken);
+
+        List<QuestionDetailsResponse> questionDetailsResponseList = new ArrayList<QuestionDetailsResponse>();
+        if (!questionEntityList.isEmpty()) {
+
+            for (QuestionEntity questionEntity : questionEntityList) {
+
+                QuestionDetailsResponse questionDetailResponse = new QuestionDetailsResponse();
+                questionDetailResponse.setId(questionEntity.getUuid());
+                questionDetailResponse.setContent(questionEntity.getContent());
+                questionDetailsResponseList.add(questionDetailResponse);
+            }
+
+        }
+
+        return new ResponseEntity<List<QuestionDetailsResponse>>(questionDetailsResponseList, HttpStatus.OK);
+
     }
 }
 

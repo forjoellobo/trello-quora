@@ -1,6 +1,5 @@
 package com.upgrad.quora.service.business;
 
-import com.upgrad.quora.api.model.*;
 import com.upgrad.quora.service.common.EndPointIdentifier;
 import com.upgrad.quora.service.dao.QuestionDao;
 import com.upgrad.quora.service.dao.UserDao;
@@ -9,6 +8,7 @@ import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
+import com.upgrad.quora.service.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -22,13 +22,13 @@ import java.util.UUID;
 public class QuestionService implements EndPointIdentifier {
 
     @Autowired
-    UserDao userDao;
+    private UserDao userDao;
 
     @Autowired
-    QuestionDao questionDao;
+    private QuestionDao questionDao;
 
     @Autowired
-    AuthorizationService authorizationService;
+    private AuthorizationService authorizationService;
 
     /**
      * Method to create a new user.
@@ -36,7 +36,7 @@ public class QuestionService implements EndPointIdentifier {
      * @return created UserEntity
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public QuestionEntity createQuestion(final QuestionRequest questionRequest, String accessToken) throws AuthorizationFailedException {
+    public QuestionEntity createQuestion(final QuestionEntity questionRequest, final String accessToken) throws AuthorizationFailedException {
         UserAuthTokenEntity userAuthTokenEntity = authorizationService.getUserAuthTokenEntity(accessToken,QUESTION_ENDPOINT);
 
         final QuestionEntity questionEntity = new QuestionEntity();
@@ -56,7 +56,7 @@ public class QuestionService implements EndPointIdentifier {
      * @throws AuthorizationFailedException
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public List<QuestionEntity> getAllQuestions(String accessToken) throws AuthorizationFailedException {
+    public List<QuestionEntity> getAllQuestions(final String accessToken) throws AuthorizationFailedException {
         authorizationService.getUserAuthTokenEntity(accessToken,GET_ALL_QUESTIONS);
 
         return questionDao.getAllQuestions();
@@ -70,7 +70,7 @@ public class QuestionService implements EndPointIdentifier {
      */
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public QuestionEntity updateQuestion(QuestionEntity questionEntity) {
+    public QuestionEntity updateQuestion(final QuestionEntity questionEntity) {
         return questionDao.updateQuestion(questionEntity);
     }
 
@@ -84,7 +84,7 @@ public class QuestionService implements EndPointIdentifier {
      */
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public QuestionEntity checkQuestion(String accessToken, String questionId) throws AuthorizationFailedException, InvalidQuestionException {
+    public QuestionEntity checkQuestion(final String accessToken, final String questionId) throws AuthorizationFailedException, InvalidQuestionException {
 
         UserAuthTokenEntity userAuthTokenEntity = authorizationService.getUserAuthTokenEntity(accessToken,CHECK_QUESTION);
         UserEntity user = userAuthTokenEntity.getUser();
@@ -110,7 +110,7 @@ public class QuestionService implements EndPointIdentifier {
      */
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public String deleteQuestion(String questionId, String accessToken) throws AuthorizationFailedException, InvalidQuestionException {
+    public String deleteQuestion(final String questionId, final String accessToken) throws AuthorizationFailedException, InvalidQuestionException {
         UserAuthTokenEntity userAuthTokenEntity = authorizationService.getUserAuthTokenEntity(accessToken,DELETE_QUESTION);
 
         UserEntity user = userAuthTokenEntity.getUser();
@@ -124,6 +124,25 @@ public class QuestionService implements EndPointIdentifier {
             String deletedQuestionid=questionId;
             return (deletedQuestionid);
         }
+    }
+
+    /*
+     * This method fetch all the questions of the user from the database
+     * accepts uuid and access token
+     * */
+    public List<QuestionEntity> getAllQuestionsByUser(final String userId, final String accessToken) throws AuthorizationFailedException, UserNotFoundException {
+        // check authentication validation
+        UserAuthTokenEntity userAuthTokenEntity = authorizationService.getUserAuthTokenEntity(accessToken, GET_ALL_QUESTIONS_USER);
+
+        UserEntity userEntity = userDao.getUserByUuid(userId);
+
+        // check if valid uuid
+        if (userEntity == null) {
+            throw new UserNotFoundException("USR-001", "User with entered uuid whose question details are to be seen does not exist");
+        }
+
+        return questionDao.getAllQuestionsByUser(userId);
+
     }
 
     QuestionEntity checkQuestionIsValid(String uuid) throws InvalidQuestionException {

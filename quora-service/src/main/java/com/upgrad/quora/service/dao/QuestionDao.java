@@ -93,4 +93,14 @@ public class QuestionDao {
         int rowsAffected = finalQuery.executeUpdate();
     }
 
+    /**
+     * Method to get all questions of a particular user
+     *
+     * @param uuid - user ID
+     */
+    public List<QuestionEntity> getAllQuestionsByUser(String uuid) {
+        return entityManager.createNamedQuery("getQuestionByUuid", QuestionEntity.class)
+                .setParameter("uuid", uuid).getResultList();
+    }
+
 }
