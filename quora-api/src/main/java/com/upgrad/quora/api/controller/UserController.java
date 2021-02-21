@@ -43,7 +43,6 @@ public class UserController {
      * @throws SignUpRestrictedException - if the username or email already exist in the database.
      */
 
-
     private String[] bearerAccessToken;
 
 
@@ -114,7 +113,6 @@ public class UserController {
                 new SignoutResponse().id(userEntity.getUuid()).message("SIGNED OUT SUCCESSFULLY");
         return new ResponseEntity<SignoutResponse>(signoutResponse, HttpStatus.OK);
     }
-
 
 
 }
