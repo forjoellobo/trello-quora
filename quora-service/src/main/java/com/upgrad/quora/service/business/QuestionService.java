@@ -32,17 +32,15 @@ public class QuestionService implements EndPointIdentifier {
 
     /**
      * Method to create a new user.
-     * @param questionRequest the QuestionEntity to be created
+     * @param questionEntity the QuestionEntity to be created
      * @return created UserEntity
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public QuestionEntity createQuestion(final QuestionEntity questionRequest, final String accessToken) throws AuthorizationFailedException {
+    public QuestionEntity createQuestion(final QuestionEntity questionEntity, final String accessToken) throws AuthorizationFailedException {
         UserAuthTokenEntity userAuthTokenEntity = authorizationService.getUserAuthTokenEntity(accessToken,QUESTION_ENDPOINT);
 
-        final QuestionEntity questionEntity = new QuestionEntity();
         questionEntity.setUuid(UUID.randomUUID().toString());
         questionEntity.setUser(userAuthTokenEntity.getUser());
-        questionEntity.setContent(questionRequest.getContent());
         questionEntity.setDate(ZonedDateTime.now());
         return questionDao.createQuestion(questionEntity);
 

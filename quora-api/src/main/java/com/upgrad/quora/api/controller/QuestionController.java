@@ -47,10 +47,12 @@ public class QuestionController implements EndPointIdentifier {
      */
     @PostMapping(path = "/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<QuestionResponse> createQuestion(@RequestHeader("authorization") final String accessToken,
-                                                           final QuestionEntity questionRequest) throws AuthorizationFailedException {
+                                                           final QuestionRequest questionRequest) throws AuthorizationFailedException {
 
 
-        final QuestionEntity createdQuestionEntity = questionService.createQuestion(questionRequest,accessToken);
+        QuestionEntity questionEntity = new QuestionEntity();
+        questionEntity.setContent(questionRequest.getContent());
+        final QuestionEntity createdQuestionEntity = questionService.createQuestion(questionEntity, accessToken);
         QuestionResponse questionResponse = new QuestionResponse().id(createdQuestionEntity.getUuid())
                 .status("QUESTION CREATED");
 
