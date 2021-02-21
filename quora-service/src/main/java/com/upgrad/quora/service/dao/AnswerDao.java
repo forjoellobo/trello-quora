@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 //Dao class for performing CRUD operations on answer table in the database.
 @Repository
@@ -41,5 +42,9 @@ public class AnswerDao {
             entityManager.remove(deleteAnswer);
         }
         return deleteAnswer;
+    }
+    // method used for getting all answer for a specific question from database and it returns a list of answers.
+    public List<AnswerEntity> getAllAnswersToQuestion(final String questionId) {
+        return entityManager.createNamedQuery("getAllAnswersToQuestion", AnswerEntity.class).setParameter("uuid", questionId).getResultList();
     }
 }
